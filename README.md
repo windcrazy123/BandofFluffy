@@ -277,7 +277,7 @@ z字桥：第一个玩家进入触发逻辑，桥开始前后摇摆，最后一�
 
 BP_MainMenuController：从存档中加载人物，如果没有存档就使用DefaultCharacter1变量作为默认人物生成
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg)
+![img](\Img\Gameplay\Gamemode\1.png)
 
 生成角色后创建存档并保存（Spawn New Hat没有调用）
 
@@ -285,66 +285,68 @@ BP_MainMenuController：从存档中加载人物，如果没有存档就使用De
 
 BP_LobbyGamemode：初始化设置默认地图信息
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image004.jpg)
+![img](\Img\Gameplay\Gamemode\2.png)
 
 每个玩家加入Lobby时：控制BP_MainMenuPawn，调用BP_LobbyController中CreateHUD事件初始化Player List，调用BP_LobbyController中SpawnCharacter事件从存档中加载人物，在场景中Playerstart位置生成人物，添加玩家到PlayerList
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image006.jpg)
+![img](\Img\Gameplay\Gamemode\3.png)
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.jpg)
+![img](\Img\Gameplay\Gamemode\4.png)
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image010.jpg)
+![img](\Img\Gameplay\Gamemode\5.png)
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image012.jpg)
+![img](E:\2学习笔记\gs\AnimalDashDocument\BandofFluffy\Img\Gameplay\Gamemode\6.png)
 
 登出时销毁Actor并从PlayerList移除该Player
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image014.jpg)
+![img](E:\2学习笔记\gs\AnimalDashDocument\BandofFluffy\Img\Gameplay\Gamemode\7.png)
 
 点击Kick时调用KickPlayer事件
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image016.jpg)![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image018.jpg)
+![img](\Img\Gameplay\Gamemode\8.png)![img](\Img\Gameplay\Gamemode\9.png)
 
 开始游戏时加载LoadingScreen
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image020.jpg)
+![img](\Img\Gameplay\Gamemode\10.png)
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image022.jpg)
+![img](\Img\Gameplay\Gamemode\11.png)
 
 #### Game
 
 玩家加入Gamemode中的数组
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image024.jpg)
+![img](\Img\Gameplay\Gamemode\12.png)
  被Pause界面return to lobby按钮调用时travel到Lobby
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image026.jpg)
+![img](\Img\Gameplay\Gamemode\13.png)
 
 游戏开始倒计时结束时调用Enable Character Movement My（暂无人调用）使玩家恢复正常行走状态
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image028.jpg)
+![img](\Img\Gameplay\Gamemode\14.png)
 
 GameState：游戏倒计时
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image030.jpg)
+![img](\Img\Gameplay\Gamemode\15.png)
 
 游戏倒计时声音，倒计时为零时调用上面函数
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image032.jpg)
+![img](\Img\Gameplay\Gamemode\16.png)
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image034.jpg)
+![img](\Img\Gameplay\Gamemode\17.png)
 
 GameplayController：初始化变量倒计时不为零时生成人物
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image036.jpg)
+![img](\Img\Gameplay\Gamemode\18.png)
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image038.jpg)
+![img](\Img\Gameplay\Gamemode\19.png)
 
 PlayerState：保存当前检测点和卡路里
 
-![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image039.png)
+![img](\Img\Gameplay\Gamemode\20.png)
 
-## 工具链
+## UI
+
+
 
 ## 网络
 
