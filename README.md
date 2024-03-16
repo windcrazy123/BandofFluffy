@@ -104,13 +104,29 @@ Notify初始化CharacterMesh(Replicated)
 
 ![](\Img\Phy\11.png)
 
-一个是开始物理模拟另一个是结束物理模拟
+回调方法：
+
+![](\Img\Phy\17.png)
+
+主要逻辑：一个是开始物理模拟另一个是结束物理模拟
 
 开始物理模拟：保存当前速度和胶囊体位置停止蒙太奇动画使胶囊体无碰撞设置MovementMode==NONE，所有客户端和主机开始模拟物理，使用之前保留的速度设为当前物理速度作为抛射速度。轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
 
+![](\Img\Phy\12.png)
+
 tick：更新胶囊体位置和Character的Rotation与Location还有骨骼的四个Location一个Rotation（复制）轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
 
-退出物理模拟：从当前物理模拟保存的姿势开始播放起身蒙太奇动画，恢复之前改变的参数，轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
+![](\Img\Phy\13.png)
+
+退出物理模拟：恢复时则保存当前pose停止蒙太奇启用胶囊体碰撞，播放起身蒙太奇动画，结束后发起通知并停止tick，轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
+
+![](\Img\Phy\14.png)
+
+![](\Img\Phy\15.png)
+
+在人物蓝图中响应通知事件，停止物理模拟
+
+![](\Img\Phy\16.png)
 
 > 较详细的有：[物理模拟](https://windcrazy123.github.io/2021/04/18/%E7%89%A9%E7%90%86%E6%A8%A1%E6%8B%9F/)
 >
@@ -118,7 +134,215 @@ tick：更新胶囊体位置和Character的Rotation与Location还有骨骼的四
 
 ## 音效
 
+脚步声添加动画事件响应发射射线检测地面的物理材质，根据物理材质发出不同的声音，障碍物撞角色时发出的声音进行多播，但BGM，淘汰声音不进行多播，且为2d音效不是前面的双耳音频空间化，和音效衰减。
+
 ## GamePlay
+
+### AI
+
+> 这里有一篇入门的：[UE 行为树基础](https://windcrazy123.github.io/2021/08/20/AIBasic/)
+
+检测是否有玩家在前方或后方，如果在前方则尽力追逐并制造混乱使之进入布娃娃状态，如果在后方则有可能去赌玩家的路，如果离玩家较近则有可能撞击玩家，最高指令是翻越障碍抵达终点，抵达终点后则会来回游荡。
+
+### 角色结构
+
+![img](\Img\Gameplay\1.png)
+
+主体使用父类写共有逻辑，VR添加左右手控制器添加两个相机用于第三人称第一人称切换，两个碰撞球用于获取控制器速度，right widget interaction用于UI交互，并与Left Arrow获取控制器方向
+
+### 角色运动逻辑
+
+#### 移动
+
+每帧判断控制器是否按下，获取当前VR控制器速度根据此速度更新角色位置并移动（既双手摆臂），同时计算卡路里
+
+卡路里算式： 
+
+参考条件：68公斤、乒乓球运动1分钟卡路里为5000卡，1分钟同侧摆臂180次（往返计为1次）3次/秒
+
+参数计算：单次摆臂消耗卡路里A=5000卡/2(双臂)/180次=0.01388889千卡/次
+
+环境设定：设定一次摆臂 往返位移B=60*2cm
+
+每秒消耗卡路里X=每秒摆臂次数Y*单次摆臂消耗A*2双臂
+
+每秒摆臂次数Y=1/(往返位移B /摆臂速度V)  V来自于蓝图计算结果来自于当前帧的取值（手柄摆动速度）
+
+每秒消耗卡路里X=1/(往返位移B /摆臂速度V) *单次摆臂消耗A*2双臂
+
+累积消耗卡路里X按秒累加
+
+![img](\Img\Gameplay\2.png)
+
+![](\Img\Gameplay\3.png)
+
+![img](\Img\Gameplay\4.png)
+
+推动摇杆会获得一半的正常移动速度
+
+![img](\Img\Gameplay\5.png)
+
+#### 跳跃
+
+每帧判断控制器运动状态是否可以跳跃，同时有判断是否可调用布娃娃跌倒起身事件
+
+![img](\Img\Gameplay\6.png)
+
+![img](\Img\Gameplay\7.png)
+
+#### 翻滚
+
+每帧判断控制器是否相对，控制器移动速度是否大于阈值，再进行蒙太奇动画（同步）
+
+![img](\Img\Gameplay\8.png)
+
+通知所有人播放蒙太奇动画，同步碰撞体半高，设置碰撞体和mesh相对位置使人物保持在地面
+
+![img](\Img\Gameplay\9.png)
+
+通知拥有客户端可以再次使用翻滚动作
+
+![img](\Img\Gameplay\10.png)
+
+
+### 角色视角控制
+
+手柄摇杆推动大于一定阈值时可以进行正常的视角旋转
+
+![img](\Img\Gameplay\11.png)
+
+手柄朝向位于控制器左右时也会调用yaw input事件
+
+![img](\Img\Gameplay\12.png)
+
+第一人称，第三人称的转换：触发转换视角事件改变摄像机激活状态和UI的状态
+
+![](\Img\Gameplay\13.png)
+
+### 障碍物
+
+继承于DamageActor-lbd，他们都会调用对应的人物伤害接口
+
+![img](\Img\Gameplay\14.png)![img](\Img\Gameplay\15.png)![img](\Img\Gameplay\16.png)![img](\Img\Gameplay\17.png)
+
+#### 关卡1：
+
+滚筒：设置定时器每0.7秒发射滚筒每个滚筒存在7秒
+
+稻草人：第一个玩家进入触发逻辑，稻草人开始左右移动，最后一个玩家出来时，结束循环
+
+死亡平面：Overlap触发死亡事件
+
+左右雪球：设置两个定时器都是每秒发射一个雪球每个雪球存活8秒
+
+石头-Robin：初始化中获得向上和向下移动总时间，玩家进入范围随机时间下降上升，每帧tick使石头上升下降
+
+藤条：暂停随机时间后使藤条前后摆动
+
+#### 关卡2：
+
+石头：设置定时器随机时间发射石头，每个石头存活4秒
+
+门：不断开关门
+
+花盆：随机时间发射花盆，每个花盆存活4秒
+
+油漆桶：随机发射油漆桶，每个存活4秒
+
+架子：施加冲量模拟物理
+
+纸团：随机发射，每个存活3秒
+
+松果：第一个玩家进入触发逻辑，松果开始左右横跳，最后一个玩家出来时，结束循环（）
+
+滚石：两个碰撞盒，都会触发随机定时器发射滚石，每个存活5秒
+
+#### 关卡3：
+
+滚石：设置定时器每秒发射石头，每个石头存活8秒
+
+翻板：第一个玩家进入触发逻辑，木板开始开合，最后一个玩家出来时，结束循环（不运行）
+
+z字桥：第一个玩家进入触发逻辑，桥开始前后摇摆，最后一个玩家出来时，结束循环（不运行）
+
+破碎：触碰后破碎，10秒后销毁自身
+
+电梯：触碰立马上升，离开立马下降
+
+摇摆桥：第一个玩家进入触发逻辑，桥开始左右摇摆，最后一个玩家出来时，结束循环（不运行）
+
+### GameMode
+
+#### MainMenu
+
+BP_MainMenuController：从存档中加载人物，如果没有存档就使用DefaultCharacter1变量作为默认人物生成
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image002.jpg)
+
+生成角色后创建存档并保存（Spawn New Hat没有调用）
+
+#### Lobby
+
+BP_LobbyGamemode：初始化设置默认地图信息
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image004.jpg)
+
+每个玩家加入Lobby时：控制BP_MainMenuPawn，调用BP_LobbyController中CreateHUD事件初始化Player List，调用BP_LobbyController中SpawnCharacter事件从存档中加载人物，在场景中Playerstart位置生成人物，添加玩家到PlayerList
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image006.jpg)
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image008.jpg)
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image010.jpg)
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image012.jpg)
+
+登出时销毁Actor并从PlayerList移除该Player
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image014.jpg)
+
+点击Kick时调用KickPlayer事件
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image016.jpg)![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image018.jpg)
+
+开始游戏时加载LoadingScreen
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image020.jpg)
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image022.jpg)
+
+#### Game
+
+玩家加入Gamemode中的数组
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image024.jpg)
+ 被Pause界面return to lobby按钮调用时travel到Lobby
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image026.jpg)
+
+游戏开始倒计时结束时调用Enable Character Movement My（暂无人调用）使玩家恢复正常行走状态
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image028.jpg)
+
+GameState：游戏倒计时
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image030.jpg)
+
+游戏倒计时声音，倒计时为零时调用上面函数
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image032.jpg)
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image034.jpg)
+
+GameplayController：初始化变量倒计时不为零时生成人物
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image036.jpg)
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image038.jpg)
+
+PlayerState：保存当前检测点和卡路里
+
+![img](file:///C:/Users/WINDCR~1/AppData/Local/Temp/msohtmlclip1/01/clip_image039.png)
 
 ## 工具链
 
