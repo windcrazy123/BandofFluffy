@@ -60,33 +60,33 @@ In SkySphereMaterial, follow the comment
 
 继承接口，当障碍物造成伤害时会对角色调用事件接口，过高跌落会触发重伤逻辑接口；之后根据不同程度伤害触发不同声音并改变角色的最大移动速度，调用不同的布娃娃响应事件
 
-![img](.\Img\Phy\1.png)
+![img](./Img/Phy/1.png)
 
-![img](.\Img\Phy\2.png)
+![img](./Img/Phy/2.png)
 
 #### 布娃娃轻中伤害
 
 调用bp_ragdoll_component组件中的接口，并设置physical animation偏向动画的权重，同时设置定时器计时结束则从布娃娃状态中恢复
 
-![img](.\Img\Phy\3.png)
+![img](./Img/Phy/3.png)
 
-![img](.\Img\Phy\4.png)
+![img](./Img/Phy/4.png)
 
-![img](.\Img\Phy\5.png)
+![img](./Img/Phy/5.png)
 
-![img](.\Img\Phy\6.png)
+![img](./Img/Phy/6.png)
 
-![img](.\Img\Phy\7.png)
+![img](./Img/Phy/7.png)
 
-#### 重伤\死亡
+#### 重伤/死亡
 
 向服务器发送请求更改physicalanimation profile配置，调用bp_ragdoll_component组件中的接口开始执行布娃娃，并在一定时间后组播起身布尔值使之可以向服务器发送起身命令
 
-![img](.\Img\Phy\8.png)
+![img](./Img/Phy/8.png)
 
 在重伤时同步布娃娃中胶囊体的位置
 
-![img](.\Img\Phy\9.png)
+![img](./Img/Phy/9.png)
 
 服务器和客户端都模拟物理，但数据传输是每秒五次进行骨骼位置的复制
 
@@ -96,37 +96,37 @@ In SkySphereMaterial, follow the comment
 
 组件初始化：
 
-![](\Img\Phy\10.png)
+![](Img/Phy/10.png)
 
 Notify初始化CharacterMesh(Replicated)
 
 公开暴露方法：
 
-![](\Img\Phy\11.png)
+![](/Img/Phy/11.png)
 
 回调方法：
 
-![](\Img\Phy\17.png)
+![](/Img/Phy/17.png)
 
 主要逻辑：一个是开始物理模拟另一个是结束物理模拟
 
 开始物理模拟：保存当前速度和胶囊体位置停止蒙太奇动画使胶囊体无碰撞设置MovementMode==NONE，所有客户端和主机开始模拟物理，使用之前保留的速度设为当前物理速度作为抛射速度。轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
 
-![](\Img\Phy\12.png)
+![](/Img/Phy/12.png)
 
 tick：更新胶囊体位置和Character的Rotation与Location还有骨骼的四个Location一个Rotation（复制）轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
 
-![](\Img\Phy\13.png)
+![](/Img/Phy/13.png)
 
 退出物理模拟：恢复时则保存当前pose停止蒙太奇启用胶囊体碰撞，播放起身蒙太奇动画，结束后发起通知并停止tick，轻重伤和主机与客户端的逻辑有区别，具体根据项目配置改变即可
 
-![](\Img\Phy\14.png)
+![](/Img/Phy/14.png)
 
-![](\Img\Phy\15.png)
+![](/Img/Phy/15.png)
 
 在人物蓝图中响应通知事件，停止物理模拟
 
-![](\Img\Phy\16.png)
+![](/Img/Phy/16.png)
 
 > 较详细的有：[物理模拟](https://windcrazy123.github.io/2021/04/18/%E7%89%A9%E7%90%86%E6%A8%A1%E6%8B%9F/)
 >
@@ -146,7 +146,7 @@ tick：更新胶囊体位置和Character的Rotation与Location还有骨骼的四
 
 ### 角色结构
 
-![img](\Img\Gameplay\1.png)
+![img](/Img/Gameplay/1.png)
 
 主体使用父类写共有逻辑，VR添加左右手控制器添加两个相机用于第三人称第一人称切换，两个碰撞球用于获取控制器速度，right widget interaction用于UI交互，并与Left Arrow获取控制器方向
 
@@ -172,58 +172,58 @@ tick：更新胶囊体位置和Character的Rotation与Location还有骨骼的四
 
 累积消耗卡路里X按秒累加
 
-![img](\Img\Gameplay\2.png)
+![img](/Img/Gameplay/2.png)
 
-![](\Img\Gameplay\3.png)
+![](/Img/Gameplay/3.png)
 
-![img](\Img\Gameplay\4.png)
+![img](/Img/Gameplay/4.png)
 
 推动摇杆会获得一半的正常移动速度
 
-![img](\Img\Gameplay\5.png)
+![img](/Img/Gameplay/5.png)
 
 #### 跳跃
 
 每帧判断控制器运动状态是否可以跳跃，同时有判断是否可调用布娃娃跌倒起身事件
 
-![img](\Img\Gameplay\6.png)
+![img](/Img/Gameplay/6.png)
 
-![img](\Img\Gameplay\7.png)
+![img](/Img/Gameplay/7.png)
 
 #### 翻滚
 
 每帧判断控制器是否相对，控制器移动速度是否大于阈值，再进行蒙太奇动画（同步）
 
-![img](\Img\Gameplay\8.png)
+![img](/Img/Gameplay/8.png)
 
 通知所有人播放蒙太奇动画，同步碰撞体半高，设置碰撞体和mesh相对位置使人物保持在地面
 
-![img](\Img\Gameplay\9.png)
+![img](/Img/Gameplay/9.png)
 
 通知拥有客户端可以再次使用翻滚动作
 
-![img](\Img\Gameplay\10.png)
+![img](/Img/Gameplay/10.png)
 
 
 ### 角色视角控制
 
 手柄摇杆推动大于一定阈值时可以进行正常的视角旋转
 
-![img](\Img\Gameplay\11.png)
+![img](/Img/Gameplay/11.png)
 
 手柄朝向位于控制器左右时也会调用yaw input事件
 
-![img](\Img\Gameplay\12.png)
+![img](/Img/Gameplay/12.png)
 
 第一人称，第三人称的转换：触发转换视角事件改变摄像机激活状态和UI的状态
 
-![](\Img\Gameplay\13.png)
+![](/Img/Gameplay/13.png)
 
 ### 障碍物
 
 继承于DamageActor-lbd，他们都会调用对应的人物伤害接口
 
-![img](\Img\Gameplay\14.png)![img](\Img\Gameplay\15.png)![img](\Img\Gameplay\16.png)![img](\Img\Gameplay\17.png)
+![img](/Img/Gameplay/14.png)![img](/Img/Gameplay/15.png)![img](/Img/Gameplay/16.png)![img](/Img/Gameplay/17.png)
 
 #### 关卡1：
 
@@ -277,7 +277,7 @@ z字桥：第一个玩家进入触发逻辑，桥开始前后摇摆，最后一�
 
 BP_MainMenuController：从存档中加载人物，如果没有存档就使用DefaultCharacter1变量作为默认人物生成
 
-![img](\Img\Gameplay\Gamemode\1.png)
+![img](/Img/Gameplay/Gamemode/1.png)
 
 生成角色后创建存档并保存（Spawn New Hat没有调用）
 
@@ -285,68 +285,90 @@ BP_MainMenuController：从存档中加载人物，如果没有存档就使用De
 
 BP_LobbyGamemode：初始化设置默认地图信息
 
-![img](\Img\Gameplay\Gamemode\2.png)
+![img](/Img/Gameplay/Gamemode/2.png)
 
 每个玩家加入Lobby时：控制BP_MainMenuPawn，调用BP_LobbyController中CreateHUD事件初始化Player List，调用BP_LobbyController中SpawnCharacter事件从存档中加载人物，在场景中Playerstart位置生成人物，添加玩家到PlayerList
 
-![img](\Img\Gameplay\Gamemode\3.png)
+![img](/Img/Gameplay/Gamemode/3.png)
 
-![img](\Img\Gameplay\Gamemode\4.png)
+![img](/Img/Gameplay/Gamemode/4.png)
 
-![img](\Img\Gameplay\Gamemode\5.png)
+![img](/Img/Gameplay/Gamemode/5.png)
 
-![img](E:\2学习笔记\gs\AnimalDashDocument\BandofFluffy\Img\Gameplay\Gamemode\6.png)
+![img](Img/Gameplay/Gamemode/6.png)
 
 登出时销毁Actor并从PlayerList移除该Player
 
-![img](E:\2学习笔记\gs\AnimalDashDocument\BandofFluffy\Img\Gameplay\Gamemode\7.png)
+![img](Img/Gameplay/Gamemode/7.png)
 
 点击Kick时调用KickPlayer事件
 
-![img](\Img\Gameplay\Gamemode\8.png)![img](\Img\Gameplay\Gamemode\9.png)
+![img](/Img/Gameplay/Gamemode/8.png)![img](/Img/Gameplay/Gamemode/9.png)
 
 开始游戏时加载LoadingScreen
 
-![img](\Img\Gameplay\Gamemode\10.png)
+![img](/Img/Gameplay/Gamemode/10.png)
 
-![img](\Img\Gameplay\Gamemode\11.png)
+![img](/Img/Gameplay/Gamemode/11.png)
 
 #### Game
 
 玩家加入Gamemode中的数组
 
-![img](\Img\Gameplay\Gamemode\12.png)
+![img](/Img/Gameplay/Gamemode/12.png)
  被Pause界面return to lobby按钮调用时travel到Lobby
 
-![img](\Img\Gameplay\Gamemode\13.png)
+![img](/Img/Gameplay/Gamemode/13.png)
 
 游戏开始倒计时结束时调用Enable Character Movement My（暂无人调用）使玩家恢复正常行走状态
 
-![img](\Img\Gameplay\Gamemode\14.png)
+![img](/Img/Gameplay/Gamemode/14.png)
 
 GameState：游戏倒计时
 
-![img](\Img\Gameplay\Gamemode\15.png)
+![img](/Img/Gameplay/Gamemode/15.png)
 
 游戏倒计时声音，倒计时为零时调用上面函数
 
-![img](\Img\Gameplay\Gamemode\16.png)
+![img](/Img/Gameplay/Gamemode/16.png)
 
-![img](\Img\Gameplay\Gamemode\17.png)
+![img](/Img/Gameplay/Gamemode/17.png)
 
 GameplayController：初始化变量倒计时不为零时生成人物
 
-![img](\Img\Gameplay\Gamemode\18.png)
+![img](/Img/Gameplay/Gamemode/18.png)
 
-![img](\Img\Gameplay\Gamemode\19.png)
+![img](/Img/Gameplay/Gamemode/19.png)
 
 PlayerState：保存当前检测点和卡路里
 
-![img](\Img\Gameplay\Gamemode\20.png)
+![img](/Img/Gameplay/Gamemode/20.png)
 
 ## UI
 
+BP_MainmenuActor: widget为WBP_MainMenu，Blend Mode为Transparent，在关卡运行开始时先自动每帧tick绘制，完成后转换为手动调用绘制
 
+WBP_MainMenu：删除Map Info改变UI样式，改变Option为Tutorial
+
+![img](/Img/Gameplay/UI/1.png)
+
+BP_LobbyActor：widget为WBP_Lobby，Blend Mode为Transparent，在关卡运行开始时先自动每帧tick绘制，完成后转换为手动调用绘制
+
+WBP_Lobby：删除player list和Map Info改变UI样式，改变Option为Tutorial
+
+![img](/Img/Gameplay/UI/2.png)
+
+BP_PlaylsitActor：widget为WBP_Playlist添加调用WBP_Playlist事件的接口，Blend Mode为Transparent（手动调用绘制）
+
+![img](/Img/Gameplay/UI/3.png)
+
+WBP_MapButton：高亮选中的地图，点击后获取所有地图信息，取消其他被选中地图高亮效果并将被选中的地图添加高亮效果
+
+ 
+
+HUD：每秒更新HUD上游戏进行时间，排名更新事件（SetRank）和卡路里更新事件（SetBMR），卡路里会由人物调用更新，排名会由路线排名系统（BP_Spline）更新
+
+![](/Img/Gameplay/UI/4.png)
 
 ## 网络
 
